@@ -13,8 +13,14 @@ public class TasksController {
 
     private final TaskService taskService;
 
-    @PostMapping("/{id}")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable String id) {
-        return taskService.task1(file);
+    @PostMapping("/{id}/{subId}")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable int id, @PathVariable int subId) {
+        if(subId == 1) {
+            return taskService.task1(file);
+        }
+        if(subId==2){
+            return taskService.task2(file);
+        }
+        return "0";
     }
 }

@@ -22,6 +22,10 @@ public class TaskService {
         return calculator1.calculate1(readLines(file));
     }
 
+    public String task2(MultipartFile file) {
+        return calculator1.calculate2(readLines(file));
+    }
+
     private List<String> readLines(MultipartFile file){
         try {
             return new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
