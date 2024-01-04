@@ -76,8 +76,8 @@ public class Calculator1 implements TaskCalculator {
             if (position != -1) {
                 return new Digit(e.getValue(), position);
             }
-            return EMPTY;
-        }).filter(d->!d.equals(EMPTY)).min(digitsComparator).orElse(MAX);
+            return MAX;
+        }).min(digitsComparator).get();
     }
 
     private Digit getMaxFromLine(String line){
@@ -87,7 +87,7 @@ public class Calculator1 implements TaskCalculator {
                 return new Digit(e.getValue(), position);
             }
             return EMPTY;
-        }).max(digitsComparator).orElse(EMPTY);
+        }).max(digitsComparator).get();
     }
 
     record Digit(int digit, int position) {
