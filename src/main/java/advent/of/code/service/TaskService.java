@@ -1,7 +1,11 @@
 package advent.of.code.service;
 
 import advent.of.code.service.calculators.Calculator1;
+import advent.of.code.service.calculators.Calculator2;
+import advent.of.code.service.calculators.TaskCalculator;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,17 +20,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskService {
 
-    private final Calculator1 calculator1;
+    private final List<TaskCalculator> calculators;
 
-    public String task1(MultipartFile file) {
-        return calculator1.calculate1(readLines(file));
+    public String process(MultipartFile file, int id, int subId) throws ExecutionControl.NotImplementedException {
+        var calculator = calculators.stream().filter(tc -> tc.getId() == id).findFirst().orElseThrow(() -> new ExecutionControl.NotImplementedException("Task not implemented"));
+        if (subId == 1) {
+            return calculator.calculate1(readLines(file));
+        }
+        return calculator.calculate2(readLines(file));
     }
 
-    public String task2(MultipartFile file) {
-        return calculator1.calculate2(readLines(file));
-    }
-
-    private List<String> readLines(MultipartFile file){
+    private List<String> readLines(MultipartFile file) {
         try {
             return new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
                     .lines()

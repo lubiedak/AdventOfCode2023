@@ -45,6 +45,11 @@ public class Calculator1 implements TaskCalculator {
         return "" + sum;
     }
 
+    @Override
+    public int getId() {
+        return 1;
+    }
+
     private Digits calculateDigits(String line) {
         Digit first = EMPTY;
         Digit second = EMPTY;
