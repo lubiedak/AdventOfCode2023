@@ -2,6 +2,7 @@ package advent.of.code.service.calculators;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -10,24 +11,24 @@ public class Calculator3 implements TaskCalculator {
     // could be more flexible for dimension size
     private static final int SIZE = 140;
     private static final String symbols = "!@#$%&*-_+='/";
-    private final char[][] engineSchema = new char[SIZE][SIZE];
+    private final char[][] engineSchema = new char[SIZE][SIZE + 1];
 
     @Override
     public String calculate1(List<String> lines) {
         for (int i = 0; i < SIZE; i++) {
-            engineSchema[i] = lines.get(i).toCharArray();
+            engineSchema[i] = Arrays.copyOf(lines.get(i).toCharArray(), SIZE + 1);
+            engineSchema[i][SIZE] = '.';
         }
         int sum = 0;
         for (int i = 0; i < SIZE; i++) {
             String number = "";
-            for (int j = 0; j < SIZE; j++) {
+            for (int j = 0; j < SIZE+1; j++) {
                 int numberToAdd = 0;
                 if (Character.isDigit(engineSchema[i][j])) {
                     number += engineSchema[i][j];
                 } else if (!number.isEmpty()) {
                     numberToAdd = Integer.parseInt(number);
                     if (checkIfSpecialCharacterInSurrounding(i, j - number.length(), number.length(), engineSchema[i])) {
-                        System.out.println(numberToAdd);
                         sum += numberToAdd;
                     }
                     number = "";
