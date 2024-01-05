@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class Calculator2 implements TaskCalculator {
             for (String game : readGames(line)) {
                 var balls = parseGameSet(game);
                 impossibleGame = areBallsExceeded(balls);
-                if(impossibleGame) break;
+                if (impossibleGame) break;
             }
             if (!impossibleGame)
                 sum += id;
@@ -35,7 +36,12 @@ public class Calculator2 implements TaskCalculator {
 
     @Override
     public String calculate2(List<String> lines) {
-        return "Not implemented";
+        int sum = 0;
+        for (var line : lines) {
+            var balls = findMinimumNumberOfBalls(readGames(line));
+            sum += balls.values().stream().reduce(1, (a, b) -> a * b);
+        }
+        return "" + sum;
     }
 
     @Override
@@ -60,14 +66,30 @@ public class Calculator2 implements TaskCalculator {
         return false;
     }
 
+    private Map<String, Integer> findMinimumNumberOfBalls(String[] games) {
+        Map<String, Integer> minimumNumberOfBalls = new HashMap<>();
+        for (var game : games) {
+            var gameSet = parseGameSet(game);
+            for (var ball : gameSet.entrySet()) {
+                if (!minimumNumberOfBalls.containsKey(ball.getKey())) {
+                    minimumNumberOfBalls.put(ball.getKey(), ball.getValue());
+                } else {
+                    int currentMinimum = minimumNumberOfBalls.get(ball.getKey());
+                    if (currentMinimum < ball.getValue())
+                        minimumNumberOfBalls.put(ball.getKey(), ball.getValue());
+                }
+            }
+        }
+        return minimumNumberOfBalls;
+    }
+
     private Map<String, Integer> parseGameSet(String gameSet) {
         String[] balls = gameSet.split(", ");
         if (balls.length > 3) {
             throw new RuntimeException("Too many balls");
         }
 
-        var mapOfBalls = Stream.of(balls).collect(Collectors.toMap(b -> b.split(" ")[1], b -> Integer.parseInt(b.split(" ")[0])));
-        return mapOfBalls;
+        return Stream.of(balls).collect(Collectors.toMap(b -> b.split(" ")[1], b -> Integer.parseInt(b.split(" ")[0])));
     }
 
     record GameSet(int red, int green, int blue) {
