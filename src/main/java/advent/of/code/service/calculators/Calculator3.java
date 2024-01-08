@@ -65,7 +65,7 @@ public class Calculator3 implements TaskCalculator {
 
     @Override
     public String calculate2(List<String> lines) {
-        return null;
+        return "Not implemented";
     }
 
     @Override
