@@ -42,10 +42,10 @@ public class Calculator7 implements TaskCalculator {
         return HAND_TYPE.indexOf(handMapped);
     }
 
-    private String sortCards(String hand, String sortString) {
+    private String sortCards(String hand) {
         Character[] handArray =
                 hand.chars().mapToObj(c -> (char) c).toArray(Character[]::new);
-        Map<Character, Integer> map = new TreeMap<>(Comparator.comparingInt(sortString::indexOf));
+        Map<Character, Integer> map = new TreeMap<>(Comparator.comparingInt(CARDS::indexOf));
 
         for (var card : handArray) {
             if (map.containsKey(card)) {
@@ -56,9 +56,10 @@ public class Calculator7 implements TaskCalculator {
         }
 
         return map.entrySet().stream()
-                .sorted(Map.Entry.<Character, Integer>comparingByValue().reversed()).map(e -> {
-                    return IntStream.range(0, e.getValue()).mapToObj(index -> "" + e.getKey()).collect(Collectors.joining());
-                }).map(String::valueOf).collect(Collectors.joining());
+                .sorted(Map.Entry.<Character, Integer>comparingByValue().reversed())
+                .map(e -> IntStream.range(0, e.getValue()).mapToObj(index -> "" + e.getKey()).collect(Collectors.joining()))
+                .map(String::valueOf)
+                .collect(Collectors.joining());
 
     }
 
