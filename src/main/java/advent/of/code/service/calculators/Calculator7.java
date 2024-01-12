@@ -14,7 +14,7 @@ public class Calculator7 implements TaskCalculator {
 
     @Override
     public String calculate1(List<String> lines) {
-        var sorted = sortCards("AQ223", CARDS);
+        var sorted = sortCards("AQ223");
         int rank = handStrength(sorted);
 
         return
