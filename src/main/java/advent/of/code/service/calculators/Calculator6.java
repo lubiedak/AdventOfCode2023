@@ -11,16 +11,11 @@ public class Calculator6 implements TaskCalculator {
     public String calculate1(List<String> lines) {
         var times = lines.get(0).split(":\\s+")[1].split("\\s+");
         var distances = lines.get(1).split(":\\s+")[1].split("\\s+");
-        int optionsToBeat = 1;
+        long optionsToBeat = 1;
         for (int i = 0; i < times.length; i++) {
             int totalTime = Integer.parseInt(times[i]);
             int distanceToBeat = Integer.parseInt(distances[i]);
-            int sumOfBeats = 0;
-            for (int t = 1; t < totalTime; t++) {
-                int distanceMade = t * (totalTime - t);
-                sumOfBeats += distanceMade > distanceToBeat ? 1 : 0;
-            }
-            optionsToBeat *= sumOfBeats;
+            optionsToBeat *= calculateAllPossibleRecordBeats(totalTime, distanceToBeat);
         }
 
         return "" + optionsToBeat;
@@ -30,12 +25,16 @@ public class Calculator6 implements TaskCalculator {
     public String calculate2(List<String> lines) {
         long totalTime = Long.parseLong(lines.get(0).split(":\\s+")[1].replace(" ", ""));
         long distanceToBeat = Long.parseLong(lines.get(1).split(":\\s+")[1].replace(" ", ""));
+        return "" + calculateAllPossibleRecordBeats(totalTime, distanceToBeat);
+    }
+
+    private long calculateAllPossibleRecordBeats(long totalTime, long distanceToBeat){
         long sumOfBeats = 0;
         for (long t = 1; t < totalTime; t++) {
-            long distanceMade = t * (totalTime - t);
+            long distanceMade = t * (totalTime - t); //could be optimized because function is symetrical.
             sumOfBeats += distanceMade > distanceToBeat ? 1 : 0;
         }
-        return "" + sumOfBeats;
+        return sumOfBeats;
     }
 
     @Override

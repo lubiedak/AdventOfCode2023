@@ -1,16 +1,19 @@
 package advent.of.code.service.calculators;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
-public class Calculator5 implements TaskCalculator{
+@Component
+public class Calculator5 implements TaskCalculator {
     @Override
     public String calculate1(List<String> lines) {
-        return null;
+        return "Not implemented";
     }
 
     @Override
     public String calculate2(List<String> lines) {
-        return null;
+        return "Not implemented";
     }
 
     @Override
