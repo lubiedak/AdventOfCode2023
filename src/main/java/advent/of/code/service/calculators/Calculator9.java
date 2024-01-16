@@ -7,27 +7,37 @@ import java.util.List;
 
 @Component
 public class Calculator9 implements TaskCalculator {
+
     @Override
     public String calculate1(List<String> lines) {
+        return "\n" + calculate(lines, false);
+    }
+
+    @Override
+    public String calculate2(List<String> lines) {
+        return "\n" + calculate(lines, true);
+    }
+
+    private long calculate(List<String> lines, boolean predictFirst){
         long sum = 0;
         for (var line : lines) {
             Long[][] sequences = new Long[100][];
             Long[] sequence = Arrays.stream(line.split(" ")).map(Long::parseLong).toArray(Long[]::new);
 
-            int seq = 0;
+            int seqNumber = 0;
             do {
-                sequences[seq] = sequence;
+                sequences[seqNumber] = sequence;
                 var newSequence = new Long[sequence.length - 1];
                 for (int i = 1; i < sequence.length; i++) {
                     newSequence[i - 1] = sequence[i] - sequence[i - 1];
                 }
                 sequence = newSequence;
-                seq++;
+                seqNumber++;
             } while (!allAreZeros(sequence));
-            sum += predictLast(sequences, seq);
+            sum += predictFirst ? predictFirst(sequences, seqNumber) : predictLast(sequences, seqNumber);
         }
 
-        return "\n" + sum;
+        return sum;
     }
 
     private boolean allAreZeros(Long[] sequence) {
@@ -53,29 +63,6 @@ public class Calculator9 implements TaskCalculator {
             predicted =  sequences[i][0] - predicted;
         }
         return predicted;
-    }
-
-    @Override
-    public String calculate2(List<String> lines) {
-        long sum = 0;
-        for (var line : lines) {
-            Long[][] sequences = new Long[100][];
-            Long[] sequence = Arrays.stream(line.split(" ")).map(Long::parseLong).toArray(Long[]::new);
-
-            int seq = 0;
-            do {
-                sequences[seq] = sequence;
-                var newSequence = new Long[sequence.length - 1];
-                for (int i = 1; i < sequence.length; i++) {
-                    newSequence[i - 1] = sequence[i] - sequence[i - 1];
-                }
-                sequence = newSequence;
-                seq++;
-            } while (!allAreZeros(sequence));
-            sum += predictFirst(sequences, seq);
-        }
-
-        return "\n" + sum;
     }
 
     @Override
