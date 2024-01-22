@@ -7,14 +7,18 @@ import java.util.List;
 
 @Component
 public class Calculator11 implements TaskCalculator {
+    
     @Override
     public String calculate1(List<String> lines) {
-        var schema = expandSchema(lines);
+        var schema = readSchema(lines);
+        var rows = findExpandedRows(lines);
+        var columns = findExpandedColumns(schema);
         var positions = getGalaxiesPositions(schema);
-        int sum = 0;
+
+        long sum = 0;
         for (int i = 0; i < positions.size(); i++) {
             for (int j = i + 1; j < positions.size(); j++) {
-                sum += positions.get(i).distance(positions.get(j));
+                sum += distance(positions.get(i), positions.get(j), rows, columns, 2);
             }
         }
         return "" + sum;
@@ -22,33 +26,59 @@ public class Calculator11 implements TaskCalculator {
 
     @Override
     public String calculate2(List<String> lines) {
-        return "Not implemented";
+        var schema = readSchema(lines);
+        var rows = findExpandedRows(lines);
+        var columns = findExpandedColumns(schema);
+        var positions = getGalaxiesPositions(schema);
+
+        long sum = 0;
+        for (int i = 0; i < positions.size(); i++) {
+            for (int j = i + 1; j < positions.size(); j++) {
+                sum += distance(positions.get(i), positions.get(j), rows, columns, 1000000);
+            }
+        }
+        return "" + sum;
     }
 
-
-    private char[][] expandSchema(List<String> lines) {
-        var schema = rowsToExpand(lines);
-        return columnsToExpand(schema);
-    }
-
-    private char[][] rowsToExpand(List<String> lines) {
-        int totalRows = lines.size();
-        for (var line : lines) {
-            totalRows += line.contains("#") ? 0 : 1;
+    long distance(Position p1, Position p2, List<Integer> rows, List<Integer> columns, int coefficient) {
+        int firstColumn = Math.min(p1.h, p2.h);
+        int lastColumn = Math.max(p1.h, p2.h);
+        int firstRow = Math.min(p1.v, p2.v);
+        int lastRow = Math.max(p1.v, p2.v);
+        long sum = 0;
+        for (int row = firstRow; row < lastRow; row++) {
+            sum += rows.contains(row) ? coefficient : 1;
         }
 
-        char[][] schema = new char[totalRows][];
+        for (int col = firstColumn; col < lastColumn; col++) {
+            sum += columns.contains(col) ? coefficient : 1;
+        }
+        return sum;
+    }
+
+
+    private char[][] readSchema(List<String> lines) {
+        char[][] schema = new char[lines.size()][];
         int i = 0;
         for (var line : lines) {
-            if (!line.contains("#")) {
-                schema[i++] = line.toCharArray();
-            }
             schema[i++] = line.toCharArray();
         }
         return schema;
     }
 
-    private char[][] columnsToExpand(char[][] schema) {
+    private List<Integer> findExpandedRows(List<String> lines) {
+        List<Integer> rows = new ArrayList<>();
+        int i = 0;
+        for (var line : lines) {
+            if (!line.contains("#")) {
+                rows.add(i);
+            }
+            i++;
+        }
+        return rows;
+    }
+
+    private List<Integer> findExpandedColumns(char[][] schema) {
         List<Integer> columnsToExpand = new ArrayList<>();
         for (int col = 0; col < schema[0].length; col++) {
             boolean containsGalaxy = false;
@@ -62,19 +92,7 @@ public class Calculator11 implements TaskCalculator {
                 columnsToExpand.add(col);
             }
         }
-        var newSchema = new char[schema.length][];
-
-        for (int row = 0; row < schema.length; row++) {
-            int i = 0;
-            newSchema[row] = new char[schema[0].length + columnsToExpand.size()];
-            for (int col = 0; col < schema[0].length; col++) {
-                if (columnsToExpand.contains(col)) {
-                    newSchema[row][col + i++] = '.';
-                }
-                newSchema[row][col + i] = schema[row][col];
-            }
-        }
-        return newSchema;
+        return columnsToExpand;
     }
 
     private List<Position> getGalaxiesPositions(char[][] schema) {
@@ -85,7 +103,6 @@ public class Calculator11 implements TaskCalculator {
                     positions.add(new Position(row, col));
                 }
             }
-
         }
         return positions;
     }
@@ -96,8 +113,5 @@ public class Calculator11 implements TaskCalculator {
     }
 
     record Position(int v, int h) {
-        int distance(Position p) {
-            return Math.abs(p.h - h) + Math.abs(p.v - v);
-        }
     }
 }
