@@ -48,6 +48,7 @@ public class Calculator12 implements TaskCalculator {
 
     @Override
     public String calculate2(List<String> lines) {
+        //nie moge wymyślić
         return "Not implemented";
     }
 
