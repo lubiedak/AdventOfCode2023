@@ -9,16 +9,16 @@ import java.util.List;
 public class Calculator13 implements TaskCalculator {
     @Override
     public String calculate1(List<String> lines) {
-        return "" + sumRefflectionsWithDiff(lines, 0);
+        return "" + sumReflectionsWithDiff(lines, 0);
     }
 
 
     @Override
     public String calculate2(List<String> lines) {
-        return "" + sumRefflectionsWithDiff(lines, 1);
+        return "" + sumReflectionsWithDiff(lines, 1);
     }
 
-    private int sumRefflectionsWithDiff(List<String> lines, int maxDiff) {
+    private int sumReflectionsWithDiff(List<String> lines, int maxDiff) {
         List<String> currentBlock = new ArrayList<>();
         int sum = 0;
         for (var line : lines) {
@@ -40,10 +40,10 @@ public class Calculator13 implements TaskCalculator {
 
     private List<String> transpose(List<String> currentBlock) {
         List<String> transposedBlock = new ArrayList<>();
-        for (int i = 0; i < currentBlock.get(0).length(); i++) {
+        for (int col = 0; col < currentBlock.get(0).length(); col++) {
             var transposed = "";
             for (var line : currentBlock) {
-                transposed += line.charAt(i);
+                transposed += line.charAt(col);
             }
             transposedBlock.add(transposed);
         }
@@ -51,15 +51,15 @@ public class Calculator13 implements TaskCalculator {
     }
 
     private int findReflection(List<String> currentBlock, int maxDiff) {
-        for (int i = 0; i < currentBlock.size() - 1; i++) {
+        for (int row = 0; row < currentBlock.size() - 1; row++) {
             int diff = 0;
-            var begin = i;
-            var end = i + 1;
+            var begin = row;
+            var end = row + 1;
             while (begin >= 0 && end < currentBlock.size() && diff <= maxDiff) {
                 diff += differsBy(currentBlock.get(begin--), currentBlock.get(end++));
             }
             if (diff == maxDiff) {
-                return i + 1;
+                return row + 1;
             }
         }
         return 0;
