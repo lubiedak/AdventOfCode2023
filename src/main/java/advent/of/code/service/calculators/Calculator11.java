@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static advent.of.code.service.calculators.CalculatorUtils.readSchema;
+
 @Component
 public class Calculator11 implements TaskCalculator {
     
@@ -54,16 +56,6 @@ public class Calculator11 implements TaskCalculator {
             sum += columns.contains(col) ? coefficient : 1;
         }
         return sum;
-    }
-
-
-    private char[][] readSchema(List<String> lines) {
-        char[][] schema = new char[lines.size()][];
-        int i = 0;
-        for (var line : lines) {
-            schema[i++] = line.toCharArray();
-        }
-        return schema;
     }
 
     private List<Integer> findExpandedRows(List<String> lines) {

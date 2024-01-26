@@ -1,10 +1,9 @@
 package advent.of.code.service.calculators;
 
 import org.springframework.stereotype.Component;
-
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static advent.of.code.service.calculators.CalculatorUtils.readSchema;
 
 @Component
 public class Calculator14 implements TaskCalculator {
@@ -123,15 +122,6 @@ public class Calculator14 implements TaskCalculator {
         char temp = schema[h1][w1];
         schema[h1][w1] = schema[h][w];
         schema[h][w] = temp;
-        return schema;
-    }
-
-    private char[][] readSchema(List<String> lines) {
-        char[][] schema = new char[lines.size()][];
-        int i = 0;
-        for (var line : lines) {
-            schema[i++] = line.toCharArray();
-        }
         return schema;
     }
 

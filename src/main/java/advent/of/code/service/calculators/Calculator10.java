@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static advent.of.code.service.calculators.CalculatorUtils.readSchema;
+
 @Component
 public class Calculator10 implements TaskCalculator {
 
@@ -60,15 +62,6 @@ public class Calculator10 implements TaskCalculator {
             }
         }
         return null;
-    }
-
-    private char[][] readSchema(List<String> lines) {
-        char[][] schema = new char[lines.size()][];
-        int i = 0;
-        for (var line : lines) {
-            schema[i++] = line.toCharArray();
-        }
-        return schema;
     }
 
     private Position positionOf(char[][] schema, char c) {
