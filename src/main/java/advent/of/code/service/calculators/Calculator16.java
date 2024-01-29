@@ -23,7 +23,21 @@ public class Calculator16 implements TaskCalculator {
 
     @Override
     public String calculate2(List<String> lines) {
-        return "Not implemented";
+        var schema = readSchema(lines);
+        int sum = 0;
+        int maxCol = schema[0].length - 1;
+        int maxRow = schema.length - 1;
+        for (int row = 0; row < schema.length; row++) {
+            sum = Math.max(sum, calculate(schema, new BeamStream(new Position(row, 0), RIGHT)));
+            sum = Math.max(sum, calculate(schema, new BeamStream(new Position(row, maxCol), LEFT)));
+        }
+
+        for (int col = 0; col < schema[0].length; col++) {
+            sum = Math.max(sum, calculate(schema, new BeamStream(new Position(0, col), DOWN)));
+            sum = Math.max(sum, calculate(schema, new BeamStream(new Position(maxRow, col), UP)));
+        }
+
+        return "" + sum;
     }
 
     private int calculate(char[][] schema, BeamStream startingBeam) {
@@ -49,9 +63,9 @@ public class Calculator16 implements TaskCalculator {
 
     private static int sumEnergizedCells(int[][] schemaMarked) {
         int sum = 0;
-        for (int row = 0; row < schemaMarked.length; row++) {
+        for (int[] row : schemaMarked) {
             for (int col = 0; col < schemaMarked[0].length; col++) {
-                if (schemaMarked[row][col] != 0) {
+                if (row[col] != 0) {
                     sum++;
                 }
             }
@@ -122,13 +136,13 @@ public class Calculator16 implements TaskCalculator {
         }
 
         int beenThere(int[][] schema) {
-            int h = position.row;
-            int w = position.col;
+            int row = position.row;
+            int col = position.col;
             int nextMarker = switch (direction) {
-                case UP -> schema[h - 1][w];
-                case DOWN -> schema[h + 1][w];
-                case LEFT -> schema[h][w - 1];
-                case RIGHT -> schema[h][w + 1];
+                case UP -> schema[row - 1][col];
+                case DOWN -> schema[row + 1][col];
+                case LEFT -> schema[row][col - 1];
+                case RIGHT -> schema[row][col + 1];
             };
             return nextMarker & directions.get(direction);
         }
