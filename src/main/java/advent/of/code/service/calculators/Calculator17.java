@@ -31,12 +31,54 @@ public class Calculator17 implements TaskCalculator {
             for (var path : paths.entrySet()) {
                 String key = path.getKey();
                 char last = key.charAt(key.length() - 1);
-                var options = possible.get(last);
-                if (key.length() >= 3) {
-                    String last3 = key.substring(key.length() - 3);
-                    if (last3.chars().allMatch(c -> last3.charAt(0) == c))
-                        options = options.substring(1);
+                var options = getOptions(last, key);
+
+                for (var direction : options.toCharArray()) {
+                    var currentPosition = path.getValue();
+                    var newPosition = newPosition(schema, direction, currentPosition);
+                    if (newPosition != null) {
+                        var minDistance = minDistances[newPosition.row][newPosition.col];
+                        if (minDistance == 0 || minDistance >= newPosition.value-1) {
+                            newPaths.put(key + direction, newPosition);
+                        }
+                        if (minDistance == 0 || minDistance > newPosition.value) {
+                            minDistances[newPosition.row][newPosition.col] = newPosition.value;
+                        }
+
+                    }
                 }
+            }
+            lastPos = paths.values().stream().filter(p -> p.row == schema.length - 1 && p.col == schema[0].length - 1)
+                    .min(Comparator.comparingInt(p -> p.value));
+
+            var minDistance = newPaths.entrySet().stream().map(e -> e.getValue().toEnd(length, schema[0].length)).min(Integer::compareTo).orElse(0);
+
+            paths = newPaths.entrySet().stream()
+                    .filter(e -> e.getValue().toEnd(length, schema[0].length) < minDistance + 3)
+                    .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::value)))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        }
+
+        return "" + lastPos.get().value;
+    }
+
+    public String calculate(List<String> lines) {
+        var schema = readSchemaDigits(lines);
+        var length = schema[0].length;
+        var minDistances = new int[schema.length][length];
+
+        Map<String, Position> paths = createFirstPaths(schema, length, minDistances);
+
+        Optional<Position> lastPos = Optional.empty();
+        int i = 0;
+        while (!paths.isEmpty() && i < 3 * length) {
+            i++;
+            Map<String, Position> newPaths = new LinkedHashMap<>();
+            for (var path : paths.entrySet()) {
+                String key = path.getKey();
+                char last = key.charAt(key.length() - 1);
+                var options = getOptions(last, key);
 
                 for (var direction : options.toCharArray()) {
                     var currentPosition = path.getValue();
@@ -66,6 +108,16 @@ public class Calculator17 implements TaskCalculator {
         }
 
         return "" + lastPos.get().value;
+    }
+
+    private static String getOptions(char last, String key) {
+        var options = possible.get(last);
+        if (key.length() >= 3) {
+            String last3 = key.substring(key.length() - 3);
+            if (last3.chars().allMatch(c -> last3.charAt(0) == c))
+                options = options.substring(1);
+        }
+        return options;
     }
 
     private static Map<String, Position> createFirstPaths(byte[][] schema, int length, int[][] minDistances) {
